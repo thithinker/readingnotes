@@ -110,9 +110,46 @@
 			将集合交集存到destination中
 ----------------------------------------------------------------------------------------------------------
 第四章 进阶
-	事务：
-		
-		
+	事务：要么都执行，要么都不执行；所有命令的执行结果会在EXEC后返回
+		使用事务：
+			MULTI   //事务开始
+			[command ...]
+			EXEC	//事务提交
+		错误处理：
+			0) 语法错误：提交的事务中有语法错误(如命令不存在或参数个数不对)时，所有的命令都不会被执行
+			1) 运行错误：某个命令出现运行错误(如散列类型的命令作用于集合命令)时，其他正确的命令依旧会执行
+	WATCH命令：监控一个或多个键，一旦其中有键被修改或删除，之后的事务就不会再执行；执行EXEC后会取消对所有键的监控，
+		也可以使用UNWATCH命令来取消
+	EXPIRE：为键设置生存时间，单位是秒
+		EXPIRE key time：设置键的生存时间为time秒
+		TTL key：查看键离被删除剩余时间(单位为秒)，-1为永久存在，-2为键不存在
+		PERSIST key：取消键的生存时间设置（恢复成永久存在）；使用SET或GETSET命令赋值同时也会清除生存时间
+		PEXPIRE key time：设置键的生存时间为time毫秒
+		PTTL key：查看键离被删除剩余时间(单位为毫秒)
+	排序：
+		SORT key [ALPHA] [DESC] [LIMIT start count]：key可以为列表、集合或有序集合，若不指定ALPHA，SORT命令会尝
+			试将所有元素转换双精度浮点数，无法转换则提示错误；LIMIT限制显示排序后的从start开始的count个元素
+		BY参数：‘BY 参考键’，参考键可以是字符串类型或散列类型键的某个字段(表示为键名->字段名)；若提供了BY参数，
+			SORT命令不再依据元素的自身的值进行排序，而是对每个元素使用元素的值替换参考键中的第一个“*”并获取其
+			值，然后依据该值对元素排序。
+			0) SORT tag:ruby:posts BY post:*->time	//*需要在->之前
+			1) LPUSH mylist 2 1 3 4
+			   SET item:1 50
+			   SET item:2 100
+			   SET item:3 -10
+			   SORT mylist BY item:* DESC
+			   RESULT: 2 1 4 3
+			当某个参考键的值不存在时，或默认参考键值为0,故4(参考键为0)排在3(参考键为-10)前
+			BY后若为常量键名，Redis不会执行排序
+		GET参数：不影响排序，作用是使SORT命令返回结果不再是元素自身的值，而是GET参数中指定的键值，参数规则同BY参数
+			SORT tag:ruby:posts BY post:*->time DESC GET post:*->title GET post:*->time  //可以有多个GET参数
+		STORE参数：将结果存到列表中
+			SORT tag:ruby:posts BY post:*->time DESC GET post:*->title GET post:*->time STORE sort.result
+		说明：SORT的时间复杂段为O(n + mlogm)，n为要排序列表中元素个数，m为要返回元素个数
+			0) 尽可能减小待排序键中元素个数
+			1) 使用LIMIT参数只获取需要的数据
+			2) 若要排序的数据数量大，尽可能使用STORE参数缓存结果
+	消息通知：
 		
 		
 		
