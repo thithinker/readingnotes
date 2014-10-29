@@ -57,7 +57,48 @@
 		HVALS key：获取字段值
 		HLEN key：获取字段数量
 ----------------------------------------------------------------------------------------------------------
-	列表：
+	列表：有序的字符串列表，可以向列表两端添加删除元素，或获得列表的某一片段，元素有序，非唯一
+		LPUSH key value [value ...]：向列表的左侧添加元素
+		RPUSH key value [value ...]：向列表的右侧添加元素
+		LPOP key：从左端弹出元素
+		RPOP key：从右端弹出元素
+		LLEN key：列表长度
+		LRANGE key start stop：获取索引从start到stop之间的所有元素(包括两端，第一个左侧元素索引为0, 最后一个为-1)
+		LREM key count value：删除列表中前count个值为value的元素，返回值为实际删除元素的个数。
+			0)count > 0时，从列表左边开始删除前count个值为value的元素
+			1)count < 0时，从列表右边开始删除前count个值为value的元素
+			2)count = 0时，删除列表中所有值为value的元素
+		LINDEX key index：获取索引位置为index上的值
+		LSET key index value：将索引位置为index的值设为value
+		LTRIM key start end：删除指定索引范围之外的所有元素
+		LINSERT key BEFORE|AFTER pivot value：在列表的中从左到右查找pivot，然后在其前|后插入值value
+			(若pivot不存在则不插入)
+		RPOPLPUSH source destination：从source右侧弹出一个元素放到destination的左边
+----------------------------------------------------------------------------------------------------------
+	集合：元素无序，唯一，使用散列表实现
+		SADD key member [member ...]：增加元素，返回实际增加的元素个数
+		SREM key member [member ...]：删除元素，返回成功删除的元素个数
+		SMEMBERS key：获取集合中的所有元素
+		SISMEMBER key member：判断member是否是集合的元素，返回1或0
+		SDIFF key [key ...]：求集合差集
+		SINTER key [key ...]：求集合交集
+		SUNION key [key ...]：求集合并集
+		SCARD key：获取集合中元素个数
+		SDIFFSTORE destination key [key ...]：求集合差集并放到destination中
+		SINTERSTORE destination key [key ...]：求集合交集并放到destination中
+		SUNIONSTORE destination key [key ...]：求集合并集并放到destination中
+		SRANDMEMBER key [count]：若无count，从集合中随机取一个元素；若有count：
+			0) 当count为正数时，随机从集合中获取count个不重复的元素，count大于元素个数时，返回所有元素
+			1) 当count为负数时，随机从集合中获取|count|个元素，可以重复
+		SPOP key：从集合中随机删除一个元素
+----------------------------------------------------------------------------------------------------------
+	有序集合：元素有序，唯一，使用散列表和跳跃表实现，读取中间部分数据时间复杂度O(logN)
+		ZADD key score member [score member ...]：增加元素，score可为整数、浮点数及科学计数法表示的数（+inf，-inf）
+		ZSCORE key member：获取元素分数
+		ZRANGE key start stop：
+		
+		
+		
 		
 		
 	
