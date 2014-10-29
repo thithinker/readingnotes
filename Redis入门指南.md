@@ -150,6 +150,12 @@
 			1) 使用LIMIT参数只获取需要的数据
 			2) 若要排序的数据数量大，尽可能使用STORE参数缓存结果
 	消息通知：
+		BRPOP key [key ...] time：同RPOP，区别是当列表中没有元素时BRPOP命令会阻塞time秒(time为0时将一直阻塞)，
+			直到有新元素加入;有多个key时，任何一个有值将返回；均有值时返回最左侧key中的值
+		PUBLISH channel message：发布消息，发布的消息不会被持久化，订阅者只能收到其订阅后发出的消息
+		SUBSCRIBE channel：订阅
+		
+		
 		
 		
 		
