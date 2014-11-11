@@ -1,3 +1,4 @@
+FROM: http://oldblog.antirez.com/post/redis-persistence-demystified.html
 
 Part of my work on Redis is reading blog posts, forum messages, and the twitter time line for the "Redis" search. It is very important for a developer to have a feeling about what the community of users, and the community of non users, think about the product he is developing. And my feeling is that there is no Redis feature that is as misunderstood as its persistence. 
 
